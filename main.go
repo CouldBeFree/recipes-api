@@ -19,10 +19,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	handlers "github.com/CouldBeFree/recipes-api/handlers"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -103,8 +105,15 @@ func init() {
 		log.Fatal(err)
 	}
 	log.Println("Connected to MongoDB")
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	status := redisClient.Ping()
+	fmt.Println(status)
 	collection := client.Database("demo").Collection("recipes")
-	recipesHandler = handlers.NewRecipesHandler(ctx, collection)
+	recipesHandler = handlers.NewRecipesHandler(ctx, collection, redisClient)
 }
 
 func main() {
