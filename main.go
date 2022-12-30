@@ -36,66 +36,6 @@ var err error
 var client *mongo.Client
 var collection *mongo.Collection
 
-// func UpdateRecipeHandler(c *gin.Context) {
-// 	id := c.Param("id")
-// 	var recipe Recipe
-// 	if err := c.ShouldBindJSON(&recipe); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"error": err.Error()})
-// 		return
-// 	}
-// 	objectId, _ := primitive.ObjectIDFromHex(id)
-// 	_, err = collection.UpdateOne(ctx, bson.M{
-// 		"_id": objectId,
-// 	}, bson.D{{"$set", bson.D{
-// 		{"name", recipe.Name},
-// 		{"instructions", recipe.Instructions},
-// 		{"ingredients", recipe.Ingredients},
-// 		{"tags", recipe.Tags},
-// 	}}})
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"message": "Recipe has been updated"})
-// }
-
-// func DeleteRecipeHandler(c *gin.Context) {
-// 	id := c.Param("id")
-// 	index := -1
-// 	for i := 0; i < len(recipes); i++ {
-// 		if recipes[i].ID == id {
-// 			index = i
-// 		}
-// 	}
-// 	if index == -1 {
-// 		c.JSON(http.StatusBadRequest, gin.H{
-// 			"error": "Recipe not found"})
-// 		return
-// 	}
-// 	recipes = append(recipes[:index], recipes[index+1:]...)
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"message": "Recipe has been deleted"})
-// }
-
-// func SearchRecipesHandler(c *gin.Context) {
-// 	tag := c.Query("tag")
-// 	listOfRecipes := make([]Recipe, 0)
-// 	for i := 0; i < len(recipes); i++ {
-// 		found := false
-// 		for _, t := range recipes[i].Tags {
-// 			if strings.EqualFold(t, tag) {
-// 				found = true
-// 			}
-// 		}
-// 		if found {
-// 			listOfRecipes = append(listOfRecipes, recipes[i])
-// 		}
-// 	}
-// 	c.JSON(http.StatusOK, listOfRecipes)
-// }
-
 var recipesHandler *handlers.RecipesHandler
 
 func init() {
@@ -121,6 +61,8 @@ func main() {
 	router.POST("/recipes", recipesHandler.NewRecipeHandler)
 	router.GET("/recipes", recipesHandler.ListRecipesHandler)
 	router.PUT("/recipes/:id", recipesHandler.UpdateRecipeHandler)
+	router.GET("/recipes/:id", recipesHandler.FindRecipeHandler)
+	router.DELETE("/recipes/:id", recipesHandler.DeleteRecipeHandler)
 	//router.GET("/recipes/search", SearchRecipesHandler)
 	router.Run(":5000")
 }
